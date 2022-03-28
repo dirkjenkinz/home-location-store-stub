@@ -1,34 +1,23 @@
 'use strict';
-
+const Location = require('../models/location');
 
 /**
  * Returns all home locations from the home location store
  *
  * returns List
  **/
-exports.locationsGET = function() {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = [ {
-  "locationName" : "locationName",
-  "location" : {
-    "latitude" : 0.8008282,
-    "longitude" : 6.0274563
-  }
-}, {
-  "locationName" : "locationName",
-  "location" : {
-    "latitude" : 0.8008282,
-    "longitude" : 6.0274563
-  }
-} ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+exports.locationsGET = () => {
+  console.log(locationsGET);
+  return new Promise(async (resolve, reject) => {
+    try {
+      const locations = await Location.find();
+      resolve(locations);
+    } catch (err) {
+      console.log(err);
+      reject(new utils.respondWithCode(500,));
     }
   });
-}
+};
 
 
 /**
@@ -37,9 +26,21 @@ exports.locationsGET = function() {
  * homeLocation Long name of home location to delete
  * no response value expected for this operation
  **/
-exports.locationsHomeLocationDELETE = function(homeLocation) {
-  return new Promise(function(resolve, reject) {
-    resolve();
+exports.locationsHomeLocationDELETE =  (homeLocation) => {
+  console.log('locationsHomeLocationDELETE')
+  return new Promise(async (resolve, reject) => {
+    try {
+      const location = await Location.find({ homeLocation: homeLocation })
+      console.log('location=', location);
+      if (location.length === 0){
+        resolve(new utils.respondWithCode(404,));
+      };
+      await Location.deleteOne({ homeLocation: homeLocation });
+      resolve(new utils.respondWithCode(200,));
+    } catch (err) {
+      console.log(err)
+      reject(new utils.respondWithCode(500,));
+    }
   });
 }
 
@@ -51,22 +52,20 @@ exports.locationsHomeLocationDELETE = function(homeLocation) {
  * returns Location
  **/
 exports.locationsHomeLocationGET = function(homeLocation) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "locationName" : "locationName",
-  "location" : {
-    "latitude" : 0.8008282,
-    "longitude" : 6.0274563
-  }
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+  console.log('locationsHomeLocationGET');
+  return new Promise(async (resolve, reject) => {
+    try {
+      const location = await Location.find({ homeLocation: homeLocation });
+      if (location.length === 0){
+        resolve(new utils.respondWithCode(404,));
+      }
+      resolve(new utils.respondWithCode(200,));
+    } catch (err) {
+      console.log(err)
+      reject(new utils.respondWithCode(500,));
     }
   });
-}
+};
 
 
 /**
@@ -76,22 +75,24 @@ exports.locationsHomeLocationGET = function(homeLocation) {
  * returns Location
  **/
 exports.locationsPOST = function(body) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "locationName" : "locationName",
-  "location" : {
-    "latitude" : 0.8008282,
-    "longitude" : 6.0274563
-  }
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+  console.log('locationsPOST')
+  return new Promise(async (resolve, reject) => {
+    const location = new Location({
+      "locationName": body.locationName,
+      "location": {
+        "latitude": body.location.latitude,
+        "longitude": body.location.longitude,
+      }
+    })
+    try {
+      await location.save();
+      resolve(new utils.respondWithCode(200,));
+    } catch (err) {
+      console.log(err);
+      reject(new utils.respondWithCode(500,));
     }
   });
-}
+};
 
 
 /**
@@ -101,20 +102,26 @@ exports.locationsPOST = function(body) {
  * returns Location
  **/
 exports.locationsPUT = function(body) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "locationName" : "locationName",
-  "location" : {
-    "latitude" : 0.8008282,
-    "longitude" : 6.0274563
-  }
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+  console.log('locationspUT')
+  return new Promise(async (resolve, reject) => {
+    const upDatedRecord = new Location({
+      "locationName": body.locationName,
+      "location": {
+        "latitude": body.location.latitude,
+        "longitude": body.location.longitude,
+      },
+      "home": body.home
+    })
+    try {
+      var location = await Location.find({ locationName: body.locationName });
+      if (location.length === 0){
+        resolve(new utils.respondWithCode(404,));
+      };
+      await upDatedRecord.save();
+      resolve(new utils.respondWithCode(200,));
+    } catch (err) {
+      console.log(err);
+      reject(new utils.respondWithCode(500,));
     }
   });
-}
-
+};
