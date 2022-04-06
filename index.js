@@ -1,10 +1,15 @@
 'use strict';
 
-var path = require('path');
-var http = require('http');
+const path = require('path');
+const http = require('http');
 
-var oas3Tools = require('oas3-tools');
-var serverPort = 8080;
+const mongoose = require('mongoose');
+const url = 'mongodb://localhost/LocationDBex';
+mongoose.connect(url);
+
+const oas3Tools = require('oas3-tools');
+const { logger } = require('./utils/logger');
+const serverPort = 8080;
 
 // swaggerRouter configuration
 var options = {
@@ -13,8 +18,8 @@ var options = {
     },
 };
 
-var expressAppConfig = oas3Tools.expressAppConfig(path.join(__dirname, 'api/openapi.yaml'), options);
-var app = expressAppConfig.getApp();
+const expressAppConfig = oas3Tools.expressAppConfig(path.join(__dirname, 'api/openapi.yaml'), options);
+const app = expressAppConfig.getApp();
 
 // Initialize the Swagger middleware
 http.createServer(app).listen(serverPort, function () {

@@ -1,5 +1,6 @@
 'use strict';
 const Location = require('../models/location');
+const { logger } = require('../utils/logger.js');
 
 /**
  * Returns all home locations from the home location store
@@ -7,13 +8,13 @@ const Location = require('../models/location');
  * returns List
  **/
 exports.locationsGET = () => {
-  console.log(locationsGET);
+  logger.info('locationsGET');
   return new Promise(async (resolve, reject) => {
     try {
       const locations = await Location.find();
       resolve(locations);
     } catch (err) {
-      console.log(err);
+      logger.error(err);
       reject(new utils.respondWithCode(500,));
     }
   });
@@ -27,18 +28,18 @@ exports.locationsGET = () => {
  * no response value expected for this operation
  **/
 exports.locationsHomeLocationDELETE =  (homeLocation) => {
-  console.log('locationsHomeLocationDELETE')
+  logger.info('locationsHomeLocationDELETE')
   return new Promise(async (resolve, reject) => {
     try {
       const location = await Location.find({ homeLocation: homeLocation })
-      console.log('location=', location);
+      logger.info('location=', location);
       if (location.length === 0){
         resolve(new utils.respondWithCode(404,));
       };
       await Location.deleteOne({ homeLocation: homeLocation });
       resolve(new utils.respondWithCode(200,));
     } catch (err) {
-      console.log(err)
+      logger.error(err)
       reject(new utils.respondWithCode(500,));
     }
   });
@@ -52,7 +53,7 @@ exports.locationsHomeLocationDELETE =  (homeLocation) => {
  * returns Location
  **/
 exports.locationsHomeLocationGET = function(homeLocation) {
-  console.log('locationsHomeLocationGET');
+  logger.info('locationsHomeLocationGET');
   return new Promise(async (resolve, reject) => {
     try {
       const location = await Location.find({ homeLocation: homeLocation });
@@ -61,7 +62,7 @@ exports.locationsHomeLocationGET = function(homeLocation) {
       }
       resolve(new utils.respondWithCode(200,));
     } catch (err) {
-      console.log(err)
+      logger.error(err)
       reject(new utils.respondWithCode(500,));
     }
   });
@@ -75,7 +76,7 @@ exports.locationsHomeLocationGET = function(homeLocation) {
  * returns Location
  **/
 exports.locationsPOST = function(body) {
-  console.log('locationsPOST')
+  logger.info('locationsPOST')
   return new Promise(async (resolve, reject) => {
     const location = new Location({
       "locationName": body.locationName,
@@ -88,7 +89,7 @@ exports.locationsPOST = function(body) {
       await location.save();
       resolve(new utils.respondWithCode(200,));
     } catch (err) {
-      console.log(err);
+      logger.error(err);
       reject(new utils.respondWithCode(500,));
     }
   });
@@ -102,7 +103,7 @@ exports.locationsPOST = function(body) {
  * returns Location
  **/
 exports.locationsPUT = function(body) {
-  console.log('locationspUT')
+  logger.info('locationsPUT')
   return new Promise(async (resolve, reject) => {
     const upDatedRecord = new Location({
       "locationName": body.locationName,
@@ -120,7 +121,7 @@ exports.locationsPUT = function(body) {
       await upDatedRecord.save();
       resolve(new utils.respondWithCode(200,));
     } catch (err) {
-      console.log(err);
+      logger.error(err);
       reject(new utils.respondWithCode(500,));
     }
   });
