@@ -4,7 +4,7 @@ const path = require('path');
 const http = require('http');
 
 const mongoose = require('mongoose');
-const url = 'mongodb://localhost/LocationDBex';
+const url = 'mongodb://localhost/LocationDB';
 mongoose.connect(url);
 
 const oas3Tools = require('oas3-tools');
@@ -23,7 +23,7 @@ const app = expressAppConfig.getApp();
 
 // Initialize the Swagger middleware
 http.createServer(app).listen(serverPort, function () {
-    console.log('Home location store server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
-    console.log('Swagger-ui is available on http://localhost:%d/docs', serverPort);
+    logger.info('Home location store server is now listening on port %d (http://localhost:%d)', serverPort, serverPort);
+    logger.info('Swagger-ui is available on http://localhost:%d/docs', serverPort);
 });
 

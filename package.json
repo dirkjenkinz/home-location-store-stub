@@ -19,5 +19,8 @@
     "mongoose": "^6.2.7",
     "nodemon": "^2.0.15",
     "oas3-tools": "^2.2.3"
+  },
+  "devDependencies": {
+    "winston": "^3.7.2"
   }
 }

@@ -1,4 +1,5 @@
 'use strict';
+const utils = require('../utils/writer.js');
 const Location = require('../models/location');
 const { logger } = require('../utils/logger.js');
 
@@ -28,11 +29,10 @@ exports.locationsGET = () => {
  * no response value expected for this operation
  **/
 exports.locationsHomeLocationDELETE =  (homeLocation) => {
-  logger.info('locationsHomeLocationDELETE')
+  logger.info('locationsHomeLocationDELETE');
   return new Promise(async (resolve, reject) => {
     try {
       const location = await Location.find({ homeLocation: homeLocation })
-      logger.info('location=', location);
       if (location.length === 0){
         resolve(new utils.respondWithCode(404,));
       };
@@ -76,7 +76,7 @@ exports.locationsHomeLocationGET = function(homeLocation) {
  * returns Location
  **/
 exports.locationsPOST = function(body) {
-  logger.info('locationsPOST')
+  logger.info('locationsPOST');
   return new Promise(async (resolve, reject) => {
     const location = new Location({
       "locationName": body.locationName,
@@ -84,9 +84,9 @@ exports.locationsPOST = function(body) {
         "latitude": body.location.latitude,
         "longitude": body.location.longitude,
       }
-    })
+    });
     try {
-      await location.save();
+      await location.save(); 
       resolve(new utils.respondWithCode(200,));
     } catch (err) {
       logger.error(err);
@@ -95,33 +95,19 @@ exports.locationsPOST = function(body) {
   });
 };
 
-
-/**
- * Update an existing location record
- *
- * body Location Complete home location object (optional)
- * returns Location
- **/
-exports.locationsPUT = function(body) {
-  logger.info('locationsPUT')
+exports.locationsPUT = (body) => {
+  logger.info('locationsPUT');
   return new Promise(async (resolve, reject) => {
-    const upDatedRecord = new Location({
-      "locationName": body.locationName,
-      "location": {
-        "latitude": body.location.latitude,
-        "longitude": body.location.longitude,
-      },
-      "home": body.home
-    })
     try {
-      var location = await Location.find({ locationName: body.locationName });
-      if (location.length === 0){
-        resolve(new utils.respondWithCode(404,));
-      };
-      await upDatedRecord.save();
+      const resp = await Location.findOneAndUpdate(
+        { locationName: body.locationName },
+        { $set: { location: body.location } },
+        { new: true }
+      );
+      logger.info('updated record='+resp)
       resolve(new utils.respondWithCode(200,));
     } catch (err) {
-      logger.error(err);
+      logger.error('error='+err);
       reject(new utils.respondWithCode(500,));
     }
   });

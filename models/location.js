@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const GeoLocation = require('./geoLocation');
+const GeoLocation = require('./geoLocation').schema;
 
 const locationSchema = new mongoose.Schema({
-    LocationName: {
+    locationName: {
         type: String,
         required: true
     },
